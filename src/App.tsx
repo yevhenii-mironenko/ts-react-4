@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { get } from "./util/http";
 import { z } from "zod";
 import BlogPosts, { BlogPost } from "./components/BlogPosts";
+import ErrorMessage from "./components/ErrorMessage";
 
 function App() {
   const [fetchedData, setFetchedData] = useState<BlogPost[]>([]);
@@ -11,6 +12,7 @@ function App() {
   useEffect(() => {
     async function fetchPosts() {
       setIsFetching(true);
+
       try {
         const data = await get(
           "https://jsonplaceholder.typicode.com/posts",
@@ -33,15 +35,16 @@ function App() {
         setIsFetching(false);
       }
     }
+
     fetchPosts();
   }, []);
 
   return (
     <main>
       <img src="/data-fetching.png" alt="Data Fetching" />
-      <BlogPosts posts={fetchedData} />
-      {isFetching && <p>Fetching posts...</p>}
-      {error && <p id="error">{error}</p>}
+      {isFetching && <p id="loading-fallback">Fetching posts...</p>}
+      {error && <ErrorMessage text={error}></ErrorMessage>}
+      {fetchedData.length > 0 && <BlogPosts posts={fetchedData} />}
     </main>
   );
 }

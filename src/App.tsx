@@ -12,7 +12,10 @@ function App() {
     async function fetchPosts() {
       setIsFetching(true);
       try {
-        const data = await get("https://jsonplaceholder.typicode.com/posts");
+        const data = await get(
+          "https://jsonplaceholder.typicode.com/posts",
+          z.array(rawDataBlogPostSchema),
+        );
         const parsedData = expectedResponseDataSchema.parse(data);
         const blogPosts: BlogPost[] = parsedData.map((rawPost) => {
           return {

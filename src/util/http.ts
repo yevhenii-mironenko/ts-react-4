@@ -1,4 +1,6 @@
-export async function get(url: string) {
+import { z } from "zod";
+
+export async function get<T>(url: string, zodSchema: z.ZodType<T>) {
   const response = await fetch(url);
 
   if (!response.ok) {
@@ -7,5 +9,9 @@ export async function get(url: string) {
 
   const data = (await response.json()) as unknown;
 
-  return data;
+  try {
+    return zodSchema.parse(data);
+  } catch (error) {
+    throw new Error("Invalid data");
+  }
 }
